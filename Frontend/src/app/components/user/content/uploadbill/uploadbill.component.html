@@ -1,0 +1,110 @@
+<div class="content-wrapper" >
+	<section class="content-header">
+		<h1>
+			Upload Bill
+		</h1>	
+	</section>
+
+	<section class="content">
+		<div class="box box-primary">
+			<div class="box-header">
+				<h3 class="box-title">Enter Transaction Details:</h3>
+			</div> 
+
+			<form [formGroup]="uploadBillForm" (ngSubmit)="onSubmit()">
+				<div class="box-body">
+					
+					<div [ngClass]="{'has-success': uploadBillForm.controls.transactionName.valid ,'has-error': !uploadBillForm.controls.transactionName.valid && focusTname,'form-group': true, 'has-feedback': true}">
+	       			  <label *ngIf="uploadBillForm.controls.transactionName.valid" class="control-label" for="transactionName"><i class="fa fa-check"></i>Valid transaction name</label>
+	       			  <label *ngIf="!uploadBillForm.controls.transactionName.valid && focusTname" class="control-label" for="transactionName"><i class="fa fa-times-circle-o"></i>Please enter a valid name for the transaction</label>
+						<input type="text" name="transactionName" id="transactionName" class="form-control" placeholder="Transaction Name" formControlName="transactionName" autocomplete="off" (focus)="onFocus(1)"/>
+					</div>
+					
+					<div [ngClass]="{'has-success': uploadBillForm.controls.expenseAmount.valid ,'has-error': !uploadBillForm.controls.expenseAmount.valid && focusEamount,'form-group': true, 'has-feedback': true}">
+	       			  <label *ngIf="uploadBillForm.controls.expenseAmount.valid" class="control-label" for="expenseAmount"><i class="fa fa-check"></i>Valid expense amount</label>
+	       			  <label *ngIf="!uploadBillForm.controls.expenseAmount.valid && focusEamount" class="control-label" for="expenseAmount"><i class="fa fa-times-circle-o"></i>Please enter a valid number</label>
+						<input type="number" name="expenseAmount" id="expenseAmount" class="form-control" placeholder="Expense Amount" step="0.01" min="0" required formControlName="expenseAmount" (focus)="onFocus(2)"/>
+					</div>
+					
+					<div [ngClass]="{'has-success': uploadBillForm.controls.transactionDate.valid && dateValid ,'has-error': (!uploadBillForm.controls.transactionDate.valid || !dateValid) && focusTdate,'form-group': true, 'has-feedback': true}">
+	       			  <label *ngIf="uploadBillForm.controls.transactionDate.valid && dateValid" class="control-label" for="transactionDate"><i class="fa fa-check"></i>Valid transaction date</label>
+	       			  <label *ngIf="(!uploadBillForm.controls.transactionDate.valid || !dateValid) && focusTdate" class="control-label" for="transactionDate"><i class="fa fa-times-circle-o"></i>Please enter a valid transaction date</label>
+						<input type="date" name="transactionDate" id="transactionDate" data-placeholder="Transaction Date" class="form-control" required formControlName="transactionDate" (focus)="onFocus(3)"/>
+						<span class="glyphicon glyphicon-calendar form-control-feedback"></span>
+					</div>
+					
+					<div class="form-group">
+						<label>Expense Type:</label>
+				
+						<div class="radio">
+							<label for="option1">
+								<input type="radio" name="expenseTypeOptions" id="option1" value="Rent" formControlName="expenseTypeOptions" />
+								Rent
+							</label>
+						</div>
+						
+						<div class="radio">
+							<label for="option2">
+								<input type="radio" name="expenseTypeOptions" id="option2" value="Grocery" formControlName="expenseTypeOptions" />
+								Grocery
+							</label>
+						</div>
+						
+						<div class="radio">
+							<label for="option3">
+								<input type="radio" name="expenseTypeOptions" id="option3" value="Transportation" formControlName="expenseTypeOptions" />
+								Transportation
+							</label>
+						</div>
+						
+						<div class="radio">
+							<label for="option4">
+								<input type="radio" name="expenseTypeOptions" id="option4" value="Dining Out" formControlName="expenseTypeOptions" />
+								Dining Out
+							</label>
+						</div>
+						
+						<div class="radio">
+							<label for="option5">
+								<input type="radio" name="expenseTypeOptions" id="option5" value="Others" formControlName="expenseTypeOptions" />
+								Others
+							</label>
+						</div>
+					
+					</div>
+					
+					<div class="form-group">
+						<label for="comments">Comments:</label>
+						<textarea name="comments" id="comments" class="form-control" rows="3" placeholder="Enter any comments to support the bill ..." formControlName="comments"></textarea>
+					</div>
+					
+					<label>Enter the amount which each member has to pay:</label>
+					<div [ngClass]="{'has-success': amountValid && focusEamount,'has-error': !amountValid,'form-group': true, 'has-feedback': true}">
+						<label *ngIf="amountValid && focusEamount" class="control-label">(<i class="fa fa-check"></i>The expense amount id distributed correctly among the members)</label>
+						<label *ngIf="!amountValid && focusEamount" class="control-label">(<i class="fa fa-times-circle-o"></i>The expense amount does not match the amounts assigned to the members)</label>
+							<div formArrayName="members" class="row" 
+							  *ngFor="let member of uploadBillForm.get('members').controls;let  i = index">
+							   	<div class="col-xs-6" align="center">
+								  			{{ uploadBillForm.controls.members.controls[i].controls.email.value }}
+							  	</div>
+							  	<div [formGroupName]="i" class="col-xs-6" align="center">
+							    	<input formControlName="amount" placeholder="Enter Amount" type="number" min="0" step="0.01">
+							  	</div>
+							</div>
+					</div>
+				
+				</div>
+				<div class="box-footer">
+					<div class="row">
+						<div class="col-xs-6">
+							<button type="submit" class="btn btn-primary btn-block" [disabled]="!uploadBillForm.valid">Submit</button>
+						</div>
+						<div class="col-xs-6">
+							<button type="reset" class="btn btn-primary btn-block">Reset</button>
+						</div>
+					</div>
+				</div>
+			</form>
+		</div>
+	</section>
+</div>

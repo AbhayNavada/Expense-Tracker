@@ -1,0 +1,85 @@
+<aside class="main-sidebar">
+  <section class="sidebar">
+
+    <ul class="sidebar-menu">
+      <li class="header" *ngIf="show()">MAIN MENU</li>
+      <li class="treeview" *ngIf="show()">
+        <a>
+          <i class="fa fa-files-o"></i> <span>Reports</span> <i class="fa fa-angle-left pull-right"></i>
+        </a>
+        <ul class="treeview-menu">
+          <li><a routerLink="content/groupReport"><i class="fa fa-circle-o"></i>For this Group</a></li>
+          <li><a routerLink="content/individualInGroupReport"><i class="fa fa-circle-o"></i>For you in this group</a></li>
+          <li><a routerLink="content/individualReport"><i class="fa fa-circle-o"></i>Overall Individual report</a></li>
+        </ul>
+      </li>
+      <li class="treeview" *ngIf="show()">
+        <a>
+          <i class="fa fa-ticket"></i> <span>Transactions</span> <i class="fa fa-angle-left pull-right"></i>
+        </a>
+        <ul class="treeview-menu">
+          <li><a routerLink="content/initialtransaction"><i class="fa fa-circle-o"></i> Initial Transactions</a></li>
+          <li><a routerLink="content/approvedtransaction"><i class="fa fa-circle-o"></i> Approved Transactions</a></li>
+          <li><a routerLink="content/unapprovedtransaction"><i class="fa fa-circle-o"></i> Unapproved Transactions</a></li>
+          <li><a routerLink="content/completedtransaction"><i class="fa fa-circle-o"></i> Completed Transactions</a></li>
+        </ul>
+      </li>
+      <li class="treeview" *ngIf="checkGH()">
+        <a>
+          <i class="fa fa-user"></i> <span>Manage Members</span> <i class="fa fa-angle-left pull-right"></i>
+        </a>
+        <ul class="treeview-menu">
+          <li><a routerLink="content/viewMembers"><i class="fa fa-circle-o"></i>View Members</a></li>
+          <li><a routerLink="content/addmember"><i class="fa fa-circle-o"></i>Add Members</a></li>
+          <li><a routerLink="content"><i class="fa fa-circle-o"></i>Delete Members</a></li>
+        </ul>
+      </li>
+      <li *ngIf="show()">
+        <a routerLink="content/uploadbill">
+          <i class="fa fa-laptop"></i>
+          <span>Upload Bill</span>
+        </a>
+      </li>
+
+      <li class="header">MANAGE GROUPS</li>
+      <li>
+        <a routerLink="content/invitation"> <i class="fa fa-envelope"></i> <span>Invitations Received</span> </a>
+      </li>
+      <li>
+        <a data-toggle="modal" data-target="#cgModel"> <i class="fa fa-group"></i> <span>Create New Group</span> </a>
+      </li>
+
+      <li class="header">GROUPS YOU ARE IN</li>
+      <li *ngFor="let i of userService.user.group">
+        <a data-group="" (click)="onSelGroup(i)"> <i class="fa fa-circle"></i> <span>{{i.groupName}}</span> </a>
+      </li>
+    </ul>
+  </section>
+</aside>
+
+<div class="modal" id="cgModel">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" >
+                  <span >&times;</span></button>        
+        <h4 class="modal-title">Create Group</h4>
+      </div>
+      
+      <form [formGroup]="cgForm" (ngSubmit)="onSubmitCG()">
+        <div class="modal-body">
+          <label for="name">Enter Group Name</label>
+          <input type="text" name="name" formControlName="name" class="form-control">
+        </div>
+
+        <div class="modal-footer">
+            <button type="submit" [disabled]="!cgForm.valid" class="btn">Submit</button>
+            <button type="reset" class="btn ">Reset</button>
+            <button type="button" class="btn " data-dismiss="modal" >Close</button>
+        </div>
+
+      </form>
+    </div>
+  </div>
+</div>

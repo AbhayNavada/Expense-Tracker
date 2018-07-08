@@ -1,0 +1,12 @@
+/*.col-xs-6 {
+	font-size: 200%;
+}
+*/
+
+input[type="date"]::before { 
+	content: attr(data-placeholder);
+	width: 100%;
+}
+
+input[type="date"]:focus::before,
+input[type="date"]:valid::before { display: none }

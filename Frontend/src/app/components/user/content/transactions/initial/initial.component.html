@@ -1,0 +1,197 @@
+<div class="content-wrapper" >
+  <section class="content-header">
+    <h1>
+      Initial Transactions
+    </h1>
+  </section>
+  <section class="content">
+    <div class="box-body table-responsive no-padding">
+      <table class="table table-hover">
+        <tr>
+          <th>Transaction Name</th>
+          <th>Amount(Rs)</th>
+          <th>Expense Type</th>
+          <th>Date</th>
+          <th></th>
+          <th></th>
+        </tr>
+        <tr *ngFor="let i of this.transactionService.initial">
+          <td>{{i.transactionName}}</td>
+          <td>{{i.amount}}</td>
+          <td>{{i.expenseType}}</td>
+          <td>{{i.expenseDate | date}}</td>                    
+          <td><label class="switch"><input type="checkbox" (change)="togglePoll(i, $event.target.checked)" [checked]="initPoll(i)"><span class="slider round"></span></label></td>
+          <td><button class="btn btn-sm btn-link" (click)="onView(i)" data-toggle="modal" data-target="#view">View</button>
+          </td>
+        </tr>
+      </table>
+    </div>      
+  </section>
+</div>
+
+
+<div class="modal" id="view">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" >
+                  <span >&times;</span></button>        
+        <h4 class="modal-title">Details</h4>
+      </div>
+      
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-sm-6"><b>Transaction Name</b></div>
+            <div class="col-sm-6">{{selected.transactionName}}</div>
+          </div><br>
+          <div class="row">
+            <div class="col-sm-6"><b>Total Amount</b></div>
+            <div class="col-sm-6">{{selected.amount}}</div>
+          </div><br>
+          <div class="row">
+            <div class="col-sm-6"><b>Expense Date</b></div>
+            <div class="col-sm-6">{{selected.expenseDate | date:'medium'}}</div>
+          </div><br>
+          <div class="row">
+            <div class="col-sm-6"><b>Upload Date</b></div>
+            <div class="col-sm-6">{{selected.uploadDate | date:'medium'}}</div>
+          </div><br>                                      
+          <div class="row">
+            <div class="col-sm-6"><b>Expense Type</b></div>
+            <div class="col-sm-6">{{selected.expenseType}}</div>
+          </div><br>
+          <div class="row">
+            <div class="col-sm-6"><b>Comments</b></div>
+            <div class="col-sm-6">{{selected.comments}}</div>
+          </div><br>          
+          <div class="row"><div class="col-sm-12"><b>Members</b></div></div>
+          <div class="row rows" *ngFor="let j of selected.members">
+            <div class="col-sm-6">{{j.email}}</div>
+            <div class="col-sm-6">{{j.amount}}</div>
+          </div><br>
+          <div class="row">
+            <div class="col-sm-6"><b>Poll</b></div>
+            <div class="col-sm-6">
+              <div class="progress">
+                <div class="progress-bar progress-bar-green" role="progressbar" [ngStyle]="getProgress()">
+                  <span class="sr-only">40% Complete (success)</span>
+                </div>
+              </div>              
+            </div>
+          </div><br>          
+
+        </div>
+
+        <div class="modal-footer">
+            <button type="button" class="btn " data-target="
+            #edit1" data-toggle="modal" (click)="onEdit(selected)">Edit</button>
+            <button class="btn " (click)="onDelete(i)">Delete</button>          
+            <button type="button" class="btn " data-dismiss="modal">Close</button>
+        </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="edit1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" >
+                  <span >&times;</span></button>        
+        <h4 class="modal-title">Edit Details</h4>
+      </div>
+      
+      <form [formGroup]="EditForm" (ngSubmit)="onSubmit()">
+        
+        <div class="modal-body">          
+          <div [ngClass]="{'has-success': EditForm.controls.transactionName.valid ,'has-error': !EditForm.controls.transactionName.valid,'form-group': true, 'has-feedback': true}">
+                <label *ngIf="EditForm.controls.transactionName.valid" class="control-label" for="transactionName"><i class="fa fa-check"></i>Valid transaction name</label>
+                <label *ngIf="!EditForm.controls.transactionName.valid" class="control-label" for="transactionName"><i class="fa fa-times-circle-o"></i>Please enter a valid name for the transaction</label>
+            <input type="text" name="transactionName" id="transactionName" class="form-control" placeholder="Transaction Name" formControlName="transactionName" autocomplete="off" />
+          </div>
+          
+          <div [ngClass]="{'has-success': EditForm.controls.expenseAmount.valid ,'has-error': !EditForm.controls.expenseAmount.valid,'form-group': true, 'has-feedback': true}">
+                <label *ngIf="EditForm.controls.expenseAmount.valid" class="control-label" for="expenseAmount"><i class="fa fa-check"></i>Valid expense amount</label>
+                <label *ngIf="!EditForm.controls.expenseAmount.valid" class="control-label" for="expenseAmount"><i class="fa fa-times-circle-o"></i>Please enter a valid number</label>
+            <input type="number" name="expenseAmount" id="expenseAmount" class="form-control" placeholder="Expense Amount" step="0.01" min="0" required formControlName="expenseAmount"/>
+          </div>
+          
+          <div [ngClass]="{'has-success': EditForm.controls.transactionDate.valid ,'has-error': !EditForm.controls.transactionDate.valid && checkDateValid(),'form-group': true, 'has-feedback': true}">
+                <label *ngIf="EditForm.controls.transactionDate.valid" class="control-label" for="transactionDate"><i class="fa fa-check"></i>Valid transaction date</label>
+                <label *ngIf="!EditForm.controls.transactionDate.valid" class="control-label" for="transactionDate"><i class="fa fa-times-circle-o"></i>Please enter a valid transaction date</label>
+            <input type="date" name="transactionDate" id="transactionDate" class="form-control" required formControlName="transactionDate" />
+          </div>
+          
+          <div class="form-group">
+            <label>Expense Type:</label>
+        
+            <div class="radio">
+              <label for="option1">
+                <input type="radio" name="expenseTypeOptions" id="option1" value="Rent" formControlName="expenseTypeOptions" />
+                Rent
+              </label>
+            </div>
+            
+            <div class="radio">
+              <label for="option2">
+                <input type="radio" name="expenseTypeOptions" id="option2" value="Grocery" formControlName="expenseTypeOptions" />
+                Grocery
+              </label>
+            </div>
+            
+            <div class="radio">
+              <label for="option3">
+                <input type="radio" name="expenseTypeOptions" id="option3" value="Transportation" formControlName="expenseTypeOptions" />
+                Transportation
+              </label>
+            </div>
+            
+            <div class="radio">
+              <label for="option4">
+                <input type="radio" name="expenseTypeOptions" id="option4" value="Dining Out" formControlName="expenseTypeOptions" />
+                Dining Out
+              </label>
+            </div>
+            
+            <div class="radio">
+              <label for="option5">
+                <input type="radio" name="expenseTypeOptions" id="option5" value="Others" formControlName="expenseTypeOptions" />
+                Others
+              </label>
+            </div>
+          
+          </div>
+          
+          <div class="form-group">
+            <label for="comments">Comments:</label>
+            <textarea name="comments" id="comments" class="form-control" rows="3" placeholder="Enter any comments to support the bill ..." formControlName="comments"></textarea>
+          </div>
+          
+          <div class="form-group">
+            <label>Enter the amount which each member has to pay:</label>
+              <div formArrayName="members" class="row" 
+                *ngFor="let member of EditForm.get('members').controls;let  i = index">
+                  <div class="col-xs-6" align="center">
+                        {{ EditForm.controls.members.controls[i].controls.email.value }}
+                  </div>
+                  <div [formGroupName]="i" class="col-xs-6" align="center">
+                    <input formControlName="amount" placeholder="Enter Amount" type="number" min="0" step="0.01">
+                  </div>
+              </div>
+          </div>
+        
+        </div>
+        
+        <div class="modal-footer">
+          <div class="row">
+            <button type="submit" class="btn " [disabled]="!EditForm.valid">Submit</button>
+            <button type="reset" class="btn ">Reset</button>
+            <button type="button" class="btn " data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
